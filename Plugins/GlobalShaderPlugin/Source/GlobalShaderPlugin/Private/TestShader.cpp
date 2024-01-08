@@ -11,8 +11,8 @@
 #include "PixelShaderUtils.h"
 
 TGlobalResource<FSimpleVertexDeclaration> GSimpleVertexDeclaration;
-TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
-TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
+//TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
+//TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
 
 
 class FSimpleRDGVertexShader : public FGlobalShader
@@ -83,11 +83,15 @@ void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParamet
 	TShaderMapRef<FSimpleRDGVertexShader> VertexShader(GlobalShaderMap);
 	TShaderMapRef<FSimpleRDGPixelShader> PixelShader(GlobalShaderMap);
 
+	// data from component
+	auto VertexBufferRHI = InParameter.VertexBuffer->VertexBufferRHI;
+	auto IndexBufferRHI = InParameter.IndexBuffer->IndexBufferRHI;
+
 	GraphBuilder.AddPass(
 		RDG_EVENT_NAME("RDGDraw"),
 		Parameters,
 		ERDGPassFlags::Raster,
-		[Parameters, VertexShader, PixelShader, GlobalShaderMap](FRHICommandList &RHICmdList)
+		[VertexBufferRHI, IndexBufferRHI, Parameters, VertexShader, PixelShader, GlobalShaderMap](FRHICommandList &RHICmdList)
 		{
 			FRHITexture2D *RT = Parameters->RenderTargets[0].GetTexture()->GetRHI()->GetTexture2D();
 			RHICmdList.SetViewport(0, 0, 0.0f, RT->GetSizeX(), RT->GetSizeY(), 1.0f);
@@ -112,16 +116,16 @@ void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParamet
 			SetShaderParameters(RHICmdList, PixelShader, PixelShader.GetPixelShader(), Parameters->PS);
 			
 			// vertex buffer
-			RHICmdList.SetStreamSource(0, GSimpleVertexBuffer.VertexBufferRHI, 0);
+			RHICmdList.SetStreamSource(0, VertexBufferRHI, 0);
 
 			RHICmdList.DrawIndexedPrimitive(
-				GSimpleIndexBuffer.IndexBufferRHI, // index buffer
-				/*BaseVertexIndex=*/0,
-				/*MinIndex=*/0,
-				/*NumVertices=*/4,
-				/*StartIndex=*/0,
-				/*NumPrimitives=*/2,
-				/*NumInstances=*/1
+				IndexBufferRHI, // index buffer
+				0, // BaseVertexIndex
+				0, // MinIndex
+				4, // NumVertices
+				0, // StartIndex
+				2, // NumPrimitives
+				1  // NumInstances
 			);
 		}
 	);

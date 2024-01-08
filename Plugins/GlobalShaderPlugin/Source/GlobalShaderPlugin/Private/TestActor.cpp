@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// TODO: extract render logic into Component
 
 #include "TestActor.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -13,11 +13,9 @@ ATestActor::ATestActor()
     PrimaryActorTick.bCanEverTick = true;
     Component = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CubeComponent"));
     SetRootComponent(Component);
-    // �������õ�����������
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMesh(TEXT("/Engine/BasicShapes/Cube.Cube"));
     if (CubeMesh.Succeeded())
     {
-        // ��������������
         Component->SetStaticMesh(CubeMesh.Object);
     }
     static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMaterial(TEXT("Material'/GlobalShaderPlugin/NewMaterial.NewMaterial'"));
@@ -32,38 +30,54 @@ ATestActor::ATestActor()
     {
         RenderTarget = RT.Object;
     }
-    // ����Ĭ�ϰ�ɫ����
-
-    // static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMaterial(TEXT("Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
-    // static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMaterial(TEXT("Material'/GlobalShaderPlugin/NewMaterial.NewMaterial'"));
-    // if (DefaultMaterial.Succeeded())
-    //{
-    //    Material = UMaterialInstanceDynamic::Create(DefaultMaterial.Object, this, "Mat");
-    //    Material->SetTextureParameterValue("Texture", Texture);
-    //    Component->SetMaterial(0, Material);
-    //}
 }
 
 // Called when the game starts or when spawned
 void ATestActor::BeginPlay()
 {
     Super::BeginPlay();
+    InitResource();
 }
+
+void ATestActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+    ReleaseResource();
+}
+
+void ATestActor::InitResource()
+{
+    BeginInitResource(&VertexBuffer);
+    BeginInitResource(&IndexBuffer);
+}
+
+void ATestActor::ReleaseResource()
+{
+    BeginReleaseResource(&VertexBuffer);
+    BeginReleaseResource(&IndexBuffer);
+}
+
 
 // Called every frame
 void ATestActor::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
     FSimpleParameter Parameter;
     Parameter.RenderTarget = RenderTarget;
     Parameter.Color = FVector4f(0.0, 1.0, 0.0, 1.0);
+    Parameter.IndexBuffer = &IndexBuffer;
+    Parameter.VertexBuffer = &VertexBuffer;
 
     ENQUEUE_RENDER_COMMAND(CaptureCommand)
     (
         [Parameter](FRHICommandListImmediate &RHICmdList)
         {
-            RDGDraw(RHICmdList, Parameter);
-        });
+			RDGDraw(RHICmdList, Parameter);
+		}
+    );
     UMaterialInstanceDynamic *MID = Component->CreateAndSetMaterialInstanceDynamic(0);
     MID->SetTextureParameterValue("InputTexture", (UTexture *)RenderTarget);
 }
+
+

@@ -5,6 +5,8 @@
 struct FSimpleParameter
 {
 	UTextureRenderTarget2D *RenderTarget;
+	FVertexBuffer* VertexBuffer;
+	FIndexBuffer* IndexBuffer;
 	FVector4f Color;
 };
 
@@ -85,8 +87,9 @@ public:
 /*
  *  Vertex Resource Declaration
  */
-extern TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
-extern TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
+// vertex 和 index 可以自定义,声明用同一个就好了
+//extern TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
+//extern TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
 extern TGlobalResource<FSimpleVertexDeclaration> GSimpleVertexDeclaration;
 
 void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParameter);
