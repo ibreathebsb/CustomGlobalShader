@@ -39,7 +39,7 @@ public:
 	SHADER_USE_PARAMETER_STRUCT(FSimpleRDGPixelShader, FGlobalShader);
 
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
-	// Add your own VS params here!
+	// Add your own PS params here!
 	SHADER_PARAMETER(FVector4f, Color)
 	END_SHADER_PARAMETER_STRUCT()
 
@@ -98,6 +98,8 @@ void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParamet
 			GraphicsPSOInit.BlendState = TStaticBlendState<>::GetRHI();
 			GraphicsPSOInit.RasterizerState = TStaticRasterizerState<>::GetRHI();
 			GraphicsPSOInit.PrimitiveType = PT_TriangleList;
+
+			// vertex declaration(attribute index)
 			GraphicsPSOInit.BoundShaderState.VertexDeclarationRHI = GSimpleVertexDeclaration.VertexDeclarationRHI;
 
 			GraphicsPSOInit.BoundShaderState.VertexShaderRHI = VertexShader.GetVertexShader();
@@ -108,16 +110,18 @@ void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParamet
 			// Set parameters
 			SetShaderParameters(RHICmdList, VertexShader, VertexShader.GetVertexShader(), Parameters->VS);
 			SetShaderParameters(RHICmdList, PixelShader, PixelShader.GetPixelShader(), Parameters->PS);
-
+			
+			// vertex buffer
 			RHICmdList.SetStreamSource(0, GSimpleVertexBuffer.VertexBufferRHI, 0);
+
 			RHICmdList.DrawIndexedPrimitive(
-				GSimpleIndexBuffer.IndexBufferRHI,
+				GSimpleIndexBuffer.IndexBufferRHI, // index buffer
 				/*BaseVertexIndex=*/0,
 				/*MinIndex=*/0,
 				/*NumVertices=*/4,
 				/*StartIndex=*/0,
 				/*NumPrimitives=*/2,
-				/*NumInstances=*/2
+				/*NumInstances=*/1
 			);
 		}
 	);

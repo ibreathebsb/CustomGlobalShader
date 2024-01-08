@@ -85,8 +85,8 @@ public:
 /*
  *  Vertex Resource Declaration
  */
-extern TGlobalResource<FSimpleVertexDeclaration> GSimpleVertexDeclaration;
 extern TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
 extern TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
+extern TGlobalResource<FSimpleVertexDeclaration> GSimpleVertexDeclaration;
 
 void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParameter);
