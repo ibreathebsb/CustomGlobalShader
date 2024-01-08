@@ -11,8 +11,6 @@
 #include "PixelShaderUtils.h"
 
 TGlobalResource<FSimpleVertexDeclaration> GSimpleVertexDeclaration;
-//TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
-//TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
 
 
 class FSimpleRDGVertexShader : public FGlobalShader
@@ -23,6 +21,7 @@ public:
 
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
 	// Add your own VS params here!
+	SHADER_PARAMETER(FMatrix44f, VPMatrix)
 	END_SHADER_PARAMETER_STRUCT()
 
 public:
@@ -41,6 +40,7 @@ public:
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
 	// Add your own PS params here!
 	SHADER_PARAMETER(FVector4f, Color)
+	SHADER_PARAMETER(FVector4f, Color2)
 	END_SHADER_PARAMETER_STRUCT()
 
 public:
@@ -74,9 +74,11 @@ void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParamet
 	FSimpleShaderParameter* Parameters = GraphBuilder.AllocParameters<FSimpleShaderParameter>();
 	Parameters->RenderTargets[0] = FRenderTargetBinding(RenderTargetTexture, ERenderTargetLoadAction::ENoAction);
 	// vs params
-
+	Parameters->VS.VPMatrix = InParameter.VPMatrix;
+	
 	// ps params
 	Parameters->PS.Color = InParameter.Color;
+	Parameters->PS.Color2 = InParameter.Color2;
 
 	const ERHIFeatureLevel::Type FeatureLevel = GMaxRHIFeatureLevel;
 	FGlobalShaderMap *GlobalShaderMap = GetGlobalShaderMap(FeatureLevel);
@@ -125,7 +127,7 @@ void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParamet
 				4, // NumVertices
 				0, // StartIndex
 				2, // NumPrimitives
-				1  // NumInstances
+				2  // NumInstances
 			);
 		}
 	);

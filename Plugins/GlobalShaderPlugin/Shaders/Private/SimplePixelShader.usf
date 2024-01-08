@@ -2,6 +2,8 @@
 #include "/Engine/Private/Common.ush"  
 
 float4 Color;
+float4 Color2;
+float4x4 VPMatrix;
 
 struct VSInput
 {
@@ -21,12 +23,18 @@ struct VSOutput
 VSOutput MainVS(VSInput input)
 {
     VSOutput output;
-    output.Position = input.Position;
+    output.Position = mul(VPMatrix, input.Position);
+    output.Position.xy -= 0.5;
+    output.Position.xy = output.Position.xy + input.VId;
     output.PId = input.VId;
     return output;
 }
 
 float4 MainPS(VSOutput input ): SV_Target
 {
-    return Color;
+    if (input.PId % 2 == 0)
+    {
+        return Color;
+    }
+    return Color2;
 }

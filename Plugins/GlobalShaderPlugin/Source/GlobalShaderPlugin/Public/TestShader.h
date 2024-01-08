@@ -8,6 +8,8 @@ struct FSimpleParameter
 	FVertexBuffer* VertexBuffer;
 	FIndexBuffer* IndexBuffer;
 	FVector4f Color;
+	FVector4f Color2;
+	FMatrix44f VPMatrix;
 };
 
 /*
@@ -88,8 +90,6 @@ public:
  *  Vertex Resource Declaration
  */
 // vertex 和 index 可以自定义,声明用同一个就好了
-//extern TGlobalResource<FSimpleVertexBuffer> GSimpleVertexBuffer;
-//extern TGlobalResource<FSimpleIndexBuffer> GSimpleIndexBuffer;
 extern TGlobalResource<FSimpleVertexDeclaration> GSimpleVertexDeclaration;
 
 void RDGDraw(FRHICommandListImmediate &RHIImmCmdList, FSimpleParameter InParameter);

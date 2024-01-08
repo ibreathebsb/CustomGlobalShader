@@ -66,8 +66,13 @@ void ATestActor::Tick(float DeltaTime)
     FSimpleParameter Parameter;
     Parameter.RenderTarget = RenderTarget;
     Parameter.Color = FVector4f(0.0, 1.0, 0.0, 1.0);
+    Parameter.Color2 = FVector4f(1.0, 0.0, 0.0, 1.0);
     Parameter.IndexBuffer = &IndexBuffer;
     Parameter.VertexBuffer = &VertexBuffer;
+    
+    // just demo
+    FScaleMatrix Scale(FVector(0.5,0.5,1.0));
+    Parameter.VPMatrix = FMatrix44f(Scale);
 
     ENQUEUE_RENDER_COMMAND(CaptureCommand)
     (
