@@ -1,0 +1,32 @@
+#include "/Engine/Public/Platform.ush"
+#include "/Engine/Private/Common.ush"  
+
+float4 Color;
+
+struct VSInput
+{
+    
+    float4 Position : ATTRIBUTE0;
+    float2 UV : ATTRIBUTE1;
+    uint VId : SV_INSTANCEID;
+};
+
+struct VSOutput
+{
+    float2 UV : TEXCOORD0;
+    uint PId : TEXCOORD2;
+    float4 Position : SV_POSITION;
+};
+
+VSOutput MainVS(VSInput input)
+{
+    VSOutput output;
+    output.Position = input.Position;
+    output.PId = input.VId;
+    return output;
+}
+
+float4 MainPS(VSOutput input ): SV_Target
+{
+    return Color;
+}
