@@ -1,3 +1,3 @@
-# MyGlobalShader
+# UE5GlobalShader
 
-Unreal Engine Version 5.2.1
+Custom GlobalShader for Unreal Engine Version 5.2.1
